@@ -13,15 +13,9 @@ namespace AutoNeuralNet
         {
             var net = new NeuralCore(new int[] { 3, 2, 1 });
             net.SetAllMatrixes(new double[][,] { new double[,] { { -0.2, 0.1 }, { 0.3, -0.3 }, { -0.4, -0.4 } }, new double[,] { { 0.2 }, { 0.3 } } });
-            Stopwatch t1 = new Stopwatch();
-            t1.Start();
-            for (int i = 0; i < 100000; i++)
-            {
-                net.RunNet(new double[] { 1, 0.5, 0.25 });
-            }
+            net.RunNet(new double[] { 1, 0.5, 0.25 });
 
-            t1.Stop();
-            Console.WriteLine(t1.ElapsedMilliseconds);
+            net.StartTraining(10, new double[1][] { new double[] { -1.0, -1.0, -1.0 }   }, new double[][]{new double[] {-1 } });
         }
     }
 }

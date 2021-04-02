@@ -29,7 +29,7 @@ namespace AutoNeuralNet
                     final[j] += values[i] * matrix[i, j];
                 }
             }
-            return final.Select(i => 2 / (1+ Math.Exp(-i)) - 1).ToArray();
+            return final.Select(i => 2 / (1 + Math.Exp(-i)) - 1).ToArray();
         }
         private void GetRandomMatrix(ref double[,] matrix)
         {
@@ -59,10 +59,10 @@ namespace AutoNeuralNet
             if (values.Length != links[0].GetLength(0))
             {
                 throw new ArgumentOutOfRangeException($"Your inputs length is [{values.Length}], but first matrix rank is [{links[0].GetLength(0)}:{links[0].GetLength(1)}] ");
-                
+
             }
             else
-            { 
+            {
                 double[] tmpResults = values;
                 for (int i = 0; i < links.Length; i++)
                 {
@@ -70,9 +70,10 @@ namespace AutoNeuralNet
                 }
                 return tmpResults;
             }
-            
+
         }
-        public void StartTraining(int iterations, double[][] tests, double[][] correctOutputs, double lmd=0.01)
+        private double Df(double x) => 0.5 * (1 + x) * (1 - x);
+        public void StartTraining(int iterations, double[][] tests, double[][] correctOutputs, double lmd = 0.01)
         {
             for (int N = 0; N < iterations; N++)
             {
@@ -83,8 +84,11 @@ namespace AutoNeuralNet
                 for (int j = 0; j < currentOut.Length; j++)
                 {
                     var e = currentOut[j] - trueOut[j];
-                    var delta = currentOut.Select(x => 0.5 * (1 + x) * (1 / x) * e).ToArray();
-
+                    var delta = e * Df(currentOut[j]);
+                    for (int i = 0; i < links[links.Length - 1].GetLength(0); i++)
+                    {
+                        links[links.Length - 1][i, j] -= lmd * delta * currentOut[j];
+                    }                                     
                 }
             }
         }
