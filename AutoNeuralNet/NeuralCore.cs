@@ -8,17 +8,6 @@ namespace AutoNeuralNet
 {
     class NeuralCore
     {
-        private void PrintMatrix(int[] m)
-        {
-            Console.WriteLine($"[{string.Join(", ", m.Select(i => i.ToString()))}]");
-        }
-        void Prm(double[,] m)
-        {
-            foreach (var item in m)
-            {
-                Console.WriteLine(item);
-            }
-        }
         private double[] Dot(double[,] matrix, double[] values)
         {
             double[] final = new double[matrix.GetLength(1)];
@@ -30,6 +19,31 @@ namespace AutoNeuralNet
                 }
             }
             return final.Select(i => 2 / (1 + Math.Exp(-i)) - 1).ToArray();
+        }
+        private double[] TrainigDot(double[, ] matrix, double[] values, out double[] nonActivatedOut)
+        {
+            double[] final = new double[matrix.GetLength(1)];
+            for (int i = 0; i < values.Length; i++)
+            {
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    final[j] += values[i] * matrix[i, j];
+                }
+            }
+            nonActivatedOut = final;
+            return final.Select(i => 2 / (1 + Math.Exp(-i)) - 1).ToArray();
+        }
+        private double[] TrainRun(double[] values, out double[][] localInputs, out double[][] localOuts)
+        {
+            localInputs = new double[links.Length][];
+            localOuts = new double[links.Length][];
+            double[] tmpResults = values;
+            for (int i = 0; i < links.Length; i++)
+            {
+                tmpResults = TrainigDot(links[i], tmpResults, out localInputs[i]);
+                localOuts[i] = tmpResults;
+            }
+            return tmpResults;
         }
         private void GetRandomMatrix(ref double[,] matrix)
         {
@@ -73,6 +87,7 @@ namespace AutoNeuralNet
 
         }
         private double Df(double x) => 0.5 * (1 + x) * (1 - x);
+
         public void StartTraining(int iterations, double[][] tests, double[][] correctOutputs, double lmd = 0.01)
         {
             for (int N = 0; N < iterations; N++)
@@ -80,7 +95,8 @@ namespace AutoNeuralNet
                 var k = N % tests.Length;
                 double[] currentIn = tests[k];
                 double[] trueOut = correctOutputs[k];
-                double[] currentOut = RunNet(currentIn);
+                
+                double[] currentOut = TrainRun(currentIn, out double[][] localInputs, out double[][] localOuts);
                 for (int j = 0; j < currentOut.Length; j++)
                 {
                     var e = currentOut[j] - trueOut[j];
