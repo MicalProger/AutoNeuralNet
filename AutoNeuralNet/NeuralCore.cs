@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.IO;
+using Newtonsoft.Json;
 using System.Threading.Tasks;
 
 namespace AutoNeuralNet
@@ -10,6 +11,15 @@ namespace AutoNeuralNet
     class NeuralCore
     {
         double[][,] links;
+
+        public void SaveLinks()
+        {
+            StreamWriter stream = new StreamWriter(@"C:\Users\Mikhail\source\repos\ANNGit\AutoNeuralNet\AutoNeuralNet\links.txt");
+            string tlinks = JsonConvert.SerializeObject(links, Formatting.Indented);
+            stream.WriteLine(tlinks);
+            stream.Close();
+            stream.Dispose();
+        }
 
         private double F(double x) => (2 / (1 + Math.Exp(-x))) - 1;
 
@@ -86,6 +96,11 @@ namespace AutoNeuralNet
             }
         }
 
+        public NeuralCore(string linksPath)
+        {
+            links = JsonConvert.DeserializeObject<double[][,]>(new StreamReader(linksPath).ReadToEnd());
+        }
+
         public void SetMatrix(double[,] matrix, int layer) { this.links[layer] = matrix; }
 
         public void SetAllMatrixes(double[][,] m) { links = m; }
@@ -109,6 +124,8 @@ namespace AutoNeuralNet
 
         }
           
+        
+
         public void StartTraining(int iterations, double[][] tests, double[][] correctOutputs, double lmd = 0.001)
         {
             StreamWriter stream = new StreamWriter("C:\\Users\\Mikhail\\Desktop\\Logs\\snn2.log.txt");
@@ -145,7 +162,7 @@ namespace AutoNeuralNet
 
                                 nextGradients[j] += gradients[a];
                                 nextGradients[j] *= links[i + 1][j, a];
-                                nextGradients[j] *=  Df(localOuts[i + 1][j]);
+                                nextGradients[j] *= Df(localOuts[i + 1][j]);
                             }
 
                         }
@@ -164,7 +181,6 @@ namespace AutoNeuralNet
                 }
                 SaveToLog(stream, new object[] { links[0][0, 0], e });
             }
-
             stream.Close();
             stream.Dispose();
         }
