@@ -128,7 +128,7 @@ namespace AutoNeuralNet
 
         public void StartTraining(int iterations, double[][] tests, double[][] correctOutputs, double lmd = 0.001)
         {
-            StreamWriter stream = new StreamWriter("C:\\Users\\Mikhail\\Desktop\\Logs\\snn2.log.txt");
+            
             for (int N = 0; N < iterations; N++)
             {
                 var deltaToSave = 0.0;
@@ -168,7 +168,7 @@ namespace AutoNeuralNet
                         }
                         gradients = nextGradients;
                     }
-                    for (int x = 0; x < links[i].GetLength(0); x++)
+                    for (int x = 0; x < links[i].GetLength(0) - 1; x++)
                     {
                         for (int y = 0; y < links[i].GetLength(1); y++)
                         {
@@ -179,10 +179,8 @@ namespace AutoNeuralNet
                     }
 
                 }
-                SaveToLog(stream, new object[] { links[0][0, 0], e });
             }
-            stream.Close();
-            stream.Dispose();
+
         }
     }
 }
