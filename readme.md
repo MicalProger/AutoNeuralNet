@@ -9,8 +9,12 @@
 Класс, отвечающий за вычисления называется NeuralCore
 Создать экземпляр класса можно двумя способами:
 1. При помощи конфигурации слоев
-<NeuralCore net = new NeuralCore(new int[] {225, 100 , 10});>
+```c#
+NeuralCore net = new NeuralCore(new int[] {225, 100 , 10});
+```
 2. При указании путя к файлу со значениями весов в формате JSON.
-<NeuralCore net = new NeuralCore("fath/to/links/values");>
+```c#
+NeuralCore net = new NeuralCore("fath/to/links/values");
+```
 ## 2. Обучение ##
 ## 3. Применение ##
