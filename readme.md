@@ -10,7 +10,7 @@
 Создать экземпляр класса можно двумя способами:
 1. При помощи конфигурации слоев
 ```c#
-NeuralCore net = new NeuralCore(new int[] {225, 100 , 10});
+NeuralCore net = new NeuralCore(new int[] {10, 5, 3, 1});
 ```
 Конфигурация слоев указывается как массив int, где под индексом 0 - кол-во нейронов, а последний элемент - это кол-во выходов.
 2. При указании путя к файлу со значениями весов в формате JSON.
@@ -23,6 +23,23 @@ NeuralCore net = new NeuralCore("fath/to/links/values");
 ```c#
 net.StartTraining(100000, inputs, outs, 0.001);
 ```
-Метод StartTraining имеет исгнатуру void StartTraining(int iterations, double[][] tests, double[][] correctOutputs, double lmd = 0.001)
-Для 
+Метод StartTraining имеет исгнатуру void StartTraining(int iterations, double[][] tests, double[][] correctOutputs, double lmd = 0.001).
+1. Параметр iterations отвечает за поличество итераций обучения нейронной сети. 
+2. Параметры tests и correctOutputs - входные данные и правильные выходные к сообветствующим входным. Эти параматры является массивами из массивов входных и выхондых данных. 
+3. Параметр lmd отвечвет скорость обучения как множетель в корректеровке весов нейросети.
+Метод  StartTraining не единственный изменить значения весов кроме как при инициализации. Для этого следует использовать метод void SetAllMatrixes(double[][,] m)
+```c#
+double[][,] layers = new double[3][,];
+layers[0] = new double[10, 5];
+layers[1] = new double[5, 3];
+layers[2] = new double[3, 1];
+net.SetAllMatrixes(layers);
+```
+если нужно поменять значения всех весов и void SetMatrix(double[,] m, int layer)
+```c#
+double[,] layer = new double[10,5];
+net.SetMatrix(layer, 0);
+```
+для извенения весов конкретного слоя.
+Для того, чтобы сохранить прогресс обучения используйте метод void SaveLinks(string savingPath). В качестве параметра укажите путь для сохранения весов.
 ## 3. Применение ##

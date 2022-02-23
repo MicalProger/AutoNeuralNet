@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Newtonsoft.Json;
+using System;
 using System.IO;
-using Newtonsoft.Json;
-using System.Threading.Tasks;
+using System.Linq;
 
 namespace AutoNeuralNet
 {
@@ -12,13 +9,9 @@ namespace AutoNeuralNet
     {
         double[][,] links;
 
-        public void SaveLinks()
+        public void SaveLinks(string savingPath)
         {
-            StreamWriter stream = new StreamWriter(@"C:\Users\Mikhail\source\repos\ANNGit\AutoNeuralNet\AutoNeuralNet\links.txt");
-            string tlinks = JsonConvert.SerializeObject(links, Formatting.Indented);
-            stream.WriteLine(tlinks);
-            stream.Close();
-            stream.Dispose();
+            File.WriteAllText(savingPath, JsonConvert.SerializeObject(links, Formatting.Indented));
         }
 
         private double F(double x) => (2 / (1 + Math.Exp(-x))) - 1;
@@ -34,14 +27,6 @@ namespace AutoNeuralNet
                 {
                     matrix[i, j] = random.NextDouble();
                 }
-            }
-        }
-
-        private void SaveToLog(StreamWriter writer, object[] values)
-        {
-            foreach (var item in values)
-            {
-                writer.WriteLine(item.ToString());
             }
         }
 
@@ -123,12 +108,12 @@ namespace AutoNeuralNet
             }
 
         }
-          
-        
+
+
 
         public void StartTraining(int iterations, double[][] tests, double[][] correctOutputs, double lmd = 0.001)
         {
-            
+
             for (int N = 0; N < iterations; N++)
             {
                 var deltaToSave = 0.0;
