@@ -1,9 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.IO;
-using System.Linq;
+﻿using System.Text.Json;
 
-namespace AutoNeuralNet
+namespace UniversalNeuralNet
 {
     class NeuralCore
     {
@@ -11,7 +8,7 @@ namespace AutoNeuralNet
 
         public void SaveLinks(string savingPath)
         {
-            File.WriteAllText(savingPath, JsonConvert.SerializeObject(links, Formatting.Indented));
+            File.WriteAllText(savingPath, JsonSerializer.Serialize<NeuralCore>(this, new JsonSerializerOptions() { WriteIndented = true }));
         }
 
         private double F(double x) => (2 / (1 + Math.Exp(-x))) - 1;
@@ -83,7 +80,7 @@ namespace AutoNeuralNet
 
         public NeuralCore(string linksPath)
         {
-            links = JsonConvert.DeserializeObject<double[][,]>(new StreamReader(linksPath).ReadToEnd());
+            links = JsonSerializer.Deserialize<NeuralCore>(File.ReadAllText(linksPath)).links;
         }
 
         public void SetMatrix(double[,] matrix, int layer) { this.links[layer] = matrix; }
